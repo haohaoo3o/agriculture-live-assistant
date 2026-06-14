@@ -32,10 +32,10 @@ envs/
 *.crt
 
 # --- 运行时数据 ---
-screenshots/
-backend/screenshots/
-data/session_data.json
-data/douyin_live_urls.json
+/screenshots/
+/backend/screenshots/
+/data/session_data.json
+/data/douyin_live_urls.json
 *.db
 *.sqlite
 *.sqlite3

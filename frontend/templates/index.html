@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+SC:wght@300;400;500;600;700;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css">
     <script>
         tailwind.config = { theme: { extend: {
             colors: {
@@ -547,7 +547,7 @@
             <div class="text-center mb-8">
                 <div style="width:72px;height:72px;border-radius:var(--radius-lg);background:var(--green-dim);"
                      class="mx-auto mb-5 flex items-center justify-center">
-                    <i class="fas fa-satellite-dish" style="font-size:30px;color:var(--green);"></i>
+                    <i class="fas fa-satellite" style="font-size:30px;color:var(--green);"></i>
                 </div>
                 <h2 class="text-xl font-bold mb-2" style="letter-spacing:-0.01em;">连接直播间</h2>
                 <p style="color:var(--text-muted);font-size:var(--font-sm);">粘贴抖音直播间链接，AI将实时分析直播画面并给出专业辅助</p>
@@ -569,7 +569,7 @@
                     <p class="text-[10px] mt-1" style="color:var(--text-muted);">实时多模态场景理解</p>
                 </div>
                 <div class="feature-tile">
-                    <i class="fas fa-shield-haltered" style="color:var(--gold);"></i>
+                    <i class="fas fa-shield-halved" style="color:var(--gold);"></i>
                     <p class="text-xs font-semibold" style="color:var(--text-secondary);">合规实时检测</p>
                     <p class="text-[10px] mt-1" style="color:var(--text-muted);">自动识别违规风险</p>
                 </div>
@@ -678,7 +678,7 @@
                 <div class="card card-accent-red">
                     <div class="card-header">
                         <div class="card-title">
-                            <i class="fas fa-shield-haltered" style="color:var(--red);"></i> 合规检测
+                            <i class="fas fa-shield-halved" style="color:var(--red);"></i> 合规检测
                         </div>
                         <div class="flex items-center gap-2">
                             <span class="tag tag-red" id="complianceAutoTag" style="display:none;">自动</span>
@@ -689,7 +689,7 @@
                     </div>
                     <div id="complianceResult" style="overflow-y:auto;max-height:280px;">
                         <div class="text-center" style="padding:25px 0;color:var(--text-muted);">
-                            <i class="fas fa-shield-haltered" style="font-size:24px;margin-bottom:8px;display:block;opacity:0.5;"></i>
+                            <i class="fas fa-shield-halved" style="font-size:24px;margin-bottom:8px;display:block;opacity:0.5;"></i>
                             <p class="text-xs">AI将自动检测直播画面的合规性</p>
                             <p class="text-xs mt-1">识别画面文字、价格标签、宣传语等合规风险</p>
                         </div>
@@ -1158,7 +1158,7 @@ function renderAnalysis(data) {
     if (!data) return;
     const sections = [
         {k:'scene_analysis',icon:'fa-image',label:'场景分析',color:'var(--green)'},
-        {k:'anchor_status',icon:'fa-user-circle',label:'主播状态',color:'var(--blue)'},
+        {k:'anchor_status',icon:'fa-circle-user',label:'主播状态',color:'var(--blue)'},
         {k:'product_display',icon:'fa-box-open',label:'商品展示',color:'var(--gold)'},
         {k:'visual_quality',icon:'fa-eye',label:'画面质量',color:'var(--purple)'},
         {k:'interaction_elements',icon:'fa-comment-dots',label:'互动元素',color:'var(--cyan)'},
