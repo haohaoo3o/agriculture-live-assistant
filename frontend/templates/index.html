@@ -1,0 +1,1431 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智农直播助手 — 三农直播电商AI辅助平台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+SC:wght@300;400;500;600;700;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/font-awesome/6.5.1/css/all.min.css">
+    <script>
+        tailwind.config = { theme: { extend: {
+            colors: {
+                farm: { 50:'#ecfdf5',100:'#d1fae5',200:'#a7f3d0',300:'#6ee7b7',400:'#34d399',500:'#10b981',600:'#059669',700:'#047857',800:'#065f46',900:'#064e3b',950:'#022c22' },
+                soil: { 50:'#fffbeb',100:'#fef3c7',200:'#fde68a',300:'#fcd34d',400:'#fbbf24',500:'#f59e0b',600:'#d97706',700:'#b45309',800:'#92400e',900:'#78350f',950:'#451a03' },
+                night: { 50:'#f8fafc',100:'#f1f5f9',200:'#e2e8f0',300:'#cbd5e1',400:'#94a3b8',500:'#64748b',600:'#475569',700:'#334155',800:'#1e293b',900:'#0f172a',950:'#020617' }
+            },
+            fontFamily: { sans: ['Noto Sans SC','Inter','system-ui','sans-serif'], mono: ['JetBrains Mono','Fira Code','monospace'] }
+        } } }
+    </script>
+    <style>
+        /* ======= 设计令牌 ======= */
+        :root {
+            --bg-root: #020813;
+            --bg-base: #060e1b;
+            --bg-raised: #0a1628;
+            --bg-card: #0d1b2d;
+            --bg-hover: #132238;
+            --bg-input: #08111f;
+            --border-subtle: #1a2d45;
+            --border-default: #264065;
+            --border-strong: #335580;
+            --border-accent: rgba(16,185,129,0.35);
+
+            --text-primary: #e8edf5;
+            --text-secondary: #8da4bf;
+            --text-muted: #526b87;
+            --text-dim: #3a5068;
+
+            --green: #10b981;
+            --green-dim: rgba(16,185,129,0.12);
+            --green-glow: rgba(16,185,129,0.25);
+            --gold: #f59e0b;
+            --gold-dim: rgba(245,158,11,0.12);
+            --gold-glow: rgba(245,158,11,0.25);
+            --red: #ef4444;
+            --red-dim: rgba(239,68,68,0.12);
+            --blue: #60a5fa;
+            --blue-dim: rgba(96,165,250,0.12);
+            --purple: #a78bfa;
+            --purple-dim: rgba(167,139,250,0.12);
+            --cyan: #22d3ee;
+            --cyan-dim: rgba(34,211,238,0.10);
+
+            --radius-sm: 8px;
+            --radius: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+            --shadow: 0 4px 16px rgba(0,0,0,0.3);
+            --shadow-lg: 0 8px 32px rgba(0,0,0,0.4);
+            --shadow-glow-green: 0 0 20px rgba(16,185,129,0.12);
+            --shadow-glow-gold: 0 0 20px rgba(245,158,11,0.10);
+
+            --font-xs: 11px; --font-sm: 12.5px; --font-base: 13.5px; --font-lg: 15px;
+            --transition: 0.2s cubic-bezier(0.4,0,0.2,1);
+            --transition-fast: 0.12s cubic-bezier(0.4,0,0.2,1);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { font-size: 15px; }
+
+        body {
+            background: var(--bg-root);
+            color: var(--text-primary);
+            font-family: 'Noto Sans SC','Inter',system-ui,sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* ======= 滚动条 ======= */
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border-subtle); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--border-default); }
+
+        /* ======= 卡片 ======= */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 18px 20px;
+            transition: border-color var(--transition), box-shadow var(--transition);
+            position: relative;
+        }
+        .card:hover { border-color: var(--border-default); box-shadow: var(--shadow); }
+        .card-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 14px; flex-shrink: 0;
+        }
+        .card-title {
+            font-size: var(--font-sm); font-weight: 600; letter-spacing: 0.01em;
+            display: flex; align-items: center; gap: 9px;
+            color: var(--text-primary);
+        }
+        .card-title i { font-size: 14px; width: 16px; text-align: center; }
+
+        /* ======= 卡片变体 ======= */
+        .card-accent-green { border-left: 2px solid var(--green); }
+        .card-accent-gold { border-left: 2px solid var(--gold); }
+        .card-accent-red { border-left: 2px solid var(--red); }
+        .card-accent-blue { border-left: 2px solid var(--blue); }
+        .card-accent-purple { border-left: 2px solid var(--purple); }
+
+        /* ======= 顶部导航 ======= */
+        .topbar {
+            background: var(--bg-raised);
+            border-bottom: 1px solid var(--border-subtle);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            position: sticky; top: 0; z-index: 50;
+            padding: 10px 20px; display: flex; align-items: center; justify-content: space-between;
+        }
+        .topbar-logo {
+            display: flex; align-items: center; gap: 12px;
+        }
+        .topbar-logo-icon {
+            width: 36px; height: 36px; border-radius: var(--radius);
+            background: linear-gradient(135deg, var(--green) 0%, #34d399 100%);
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: var(--shadow-glow-green);
+        }
+        .topbar-logo-text h1 { font-size: var(--font-lg); font-weight: 700; color: var(--text-primary); letter-spacing: -0.01em; }
+        .topbar-logo-text p { font-size: 10px; color: var(--text-muted); margin-top: -1px; }
+
+        .topbar-metric {
+            display: flex; align-items: center; gap: 7px;
+            padding: 6px 12px; border-radius: var(--radius-sm);
+            background: var(--bg-card); border: 1px solid var(--border-subtle);
+            font-size: var(--font-xs); color: var(--text-secondary);
+            transition: border-color var(--transition-fast);
+        }
+        .topbar-metric:hover { border-color: var(--border-default); }
+        .topbar-metric-value { font-weight: 600; font-family: 'JetBrains Mono',monospace; color: var(--text-primary); }
+
+        /* ======= 状态点 ======= */
+        .dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+        .dot-live { background: var(--green); box-shadow: 0 0 8px var(--green); }
+        .dot-off { background: var(--text-muted); }
+        .dot-warn { background: var(--gold); box-shadow: 0 0 8px var(--gold); }
+        .dot-danger { background: var(--red); box-shadow: 0 0 8px var(--red); }
+        @keyframes pulse-ring { 0%,100% { box-shadow: 0 0 0 0 rgba(16,185,129,0.45); } 50% { box-shadow: 0 0 0 5px rgba(16,185,129,0); } }
+        .pulse { animation: pulse-ring 2.4s infinite; }
+
+        /* ======= 按钮 ======= */
+        .btn {
+            padding: 7px 15px; border-radius: var(--radius-sm); font-size: var(--font-sm);
+            font-weight: 500; cursor: pointer; border: none; outline: none;
+            display: inline-flex; align-items: center; gap: 7px; white-space: nowrap;
+            transition: all var(--transition-fast); letter-spacing: 0.01em;
+            font-family: inherit; line-height: 1.4;
+        }
+        .btn:hover { transform: translateY(-1px); }
+        .btn:active { transform: scale(0.97) translateY(0); }
+        .btn:disabled { opacity: 0.35; cursor: not-allowed; pointer-events: none; transform: none !important; }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--green) 0%, #059669 100%);
+            color: #fff; font-weight: 600;
+        }
+        .btn-primary:hover { box-shadow: 0 4px 16px var(--green-glow); filter: brightness(1.08); }
+        .btn-primary:disabled { background: rgba(16,185,129,0.25); color: rgba(255,255,255,0.4); }
+
+        .btn-ghost {
+            background: transparent; color: var(--text-secondary);
+            border: 1px solid var(--border-subtle);
+        }
+        .btn-ghost:hover { border-color: var(--border-default); background: var(--bg-hover); color: var(--text-primary); }
+        .btn-ghost:active { background: var(--bg-input); }
+
+        .btn-warm {
+            background: linear-gradient(135deg, var(--gold) 0%, #d97706 100%);
+            color: #fff; font-weight: 600;
+        }
+        .btn-warm:hover { box-shadow: 0 4px 16px var(--gold-glow); filter: brightness(1.08); }
+
+        .btn-danger {
+            background: rgba(239,68,68,0.15); color: #fca5a5;
+            border: 1px solid rgba(239,68,68,0.25);
+        }
+        .btn-danger:hover { background: rgba(239,68,68,0.22); color: #fecaca; border-color: rgba(239,68,68,0.4); }
+
+        .btn-xs { padding: 4px 9px; font-size: var(--font-xs); border-radius: 6px; }
+        .btn-sm { padding: 5px 11px; font-size: var(--font-xs); border-radius: 7px; }
+        .btn-lg { padding: 10px 22px; font-size: 14px; border-radius: var(--radius); }
+
+        /* ======= 输入框 ======= */
+        .input {
+            background: var(--bg-input); border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-sm); padding: 10px 14px;
+            color: var(--text-primary); font-size: var(--font-sm);
+            width: 100%; outline: none; font-family: inherit;
+            transition: all var(--transition-fast);
+        }
+        .input:hover { border-color: var(--border-default); }
+        .input:focus { border-color: var(--green); box-shadow: 0 0 0 3px var(--green-dim); background: var(--bg-base); }
+        .input::placeholder { color: var(--text-dim); }
+
+        /* ======= 标签 ======= */
+        .tag {
+            padding: 3px 9px; border-radius: 5px; font-size: 10.5px; font-weight: 600;
+            display: inline-flex; align-items: center; gap: 5px; letter-spacing: 0.02em;
+        }
+        .tag-green { background: var(--green-dim); color: #34d399; }
+        .tag-gold { background: var(--gold-dim); color: #fbbf24; }
+        .tag-red { background: var(--red-dim); color: #fca5a5; }
+        .tag-blue { background: var(--blue-dim); color: #93c5fd; }
+        .tag-purple { background: var(--purple-dim); color: #c4b5fd; }
+        .tag-cyan { background: var(--cyan-dim); color: #67e8f9; }
+
+        /* ======= Tab切换 ======= */
+        .tabs {
+            display: flex; gap: 3px; background: var(--bg-input);
+            border-radius: var(--radius-sm); padding: 4px;
+        }
+        .tab {
+            padding: 7px 13px; border-radius: 6px; font-size: var(--font-xs); font-weight: 500;
+            cursor: pointer; border: none; background: transparent; color: var(--text-muted);
+            transition: all var(--transition-fast); display: flex; align-items: center; gap: 6px;
+            font-family: inherit;
+        }
+        .tab.active { background: var(--bg-card); color: var(--green); box-shadow: var(--shadow-sm); }
+        .tab:hover:not(.active) { color: var(--text-secondary); background: rgba(255,255,255,0.03); }
+
+        /* ======= 分析结果块 ======= */
+        .result-block {
+            padding: 12px 14px; border-radius: var(--radius-sm);
+            margin-bottom: 8px; border: 1px solid var(--border-subtle);
+            background: var(--bg-base); position: relative;
+            transition: all var(--transition-fast);
+        }
+        .result-block:hover { border-color: var(--border-default); background: var(--bg-hover); }
+        .result-block-header {
+            display: flex; align-items: center; gap: 8px; margin-bottom: 6px;
+            font-size: var(--font-xs); font-weight: 600; color: var(--text-primary);
+        }
+        .result-block-header i { font-size: 12px; opacity: 0.85; }
+        .result-block-body {
+            font-size: var(--font-sm); color: var(--text-secondary);
+            line-height: 1.65; white-space: pre-wrap; word-break: break-word;
+        }
+        .result-block-accent {
+            background: var(--green-dim); border-color: rgba(16,185,129,0.2);
+        }
+        .result-block-warn {
+            background: var(--gold-dim); border-color: rgba(245,158,11,0.2);
+        }
+
+        /* ======= 建议卡片 ======= */
+        .tip-item {
+            padding: 10px 14px; border-radius: var(--radius-sm);
+            background: var(--bg-base); border: 1px solid var(--border-subtle);
+            margin-bottom: 5px; font-size: var(--font-sm); color: var(--text-secondary);
+            line-height: 1.55; display: flex; align-items: flex-start; gap: 10px;
+            transition: all var(--transition-fast);
+        }
+        .tip-item:hover { border-color: var(--border-default); background: var(--bg-hover); }
+        .tip-dot {
+            width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; margin-top: 6px;
+        }
+        .tip-dot-green { background: var(--green); box-shadow: 0 0 6px var(--green); }
+        .tip-dot-gold { background: var(--gold); box-shadow: 0 0 6px var(--gold); }
+        .tip-dot-blue { background: var(--blue); box-shadow: 0 0 6px var(--blue); }
+
+        /* ======= 评论项 ======= */
+        .comment-row {
+            padding: 9px 12px; border-radius: var(--radius-sm);
+            background: var(--bg-input); margin-bottom: 3px;
+            border-left: 2.5px solid transparent;
+            transition: all var(--transition-fast); position: relative;
+            cursor: default;
+        }
+        .comment-row:hover {
+            border-left-color: var(--green); background: var(--bg-hover);
+            padding-left: 15px;
+        }
+        .comment-row-need-reply { border-left-color: var(--gold); }
+
+        /* ======= 回复面板 ======= */
+        .reply-box {
+            background: var(--bg-hover); border: 1px solid var(--border-default);
+            border-radius: var(--radius); padding: 12px; margin-top: 6px;
+        }
+        .reply-option {
+            padding: 8px 12px; border-radius: var(--radius-sm); font-size: var(--font-sm);
+            cursor: pointer; transition: all var(--transition-fast);
+            border: 1px solid transparent; display: flex; align-items: flex-start; gap: 8px;
+            margin-bottom: 4px;
+        }
+        .reply-option:hover { background: var(--green-dim); border-color: rgba(16,185,129,0.3); }
+
+        /* ======= 风险卡片 ======= */
+        .risk-row {
+            padding: 12px 14px; border-radius: var(--radius-sm);
+            border-left: 3px solid; margin-bottom: 8px;
+            background: var(--bg-base); transition: all var(--transition-fast);
+        }
+        .risk-row:hover { transform: translateX(2px); }
+        .risk-high { border-left-color: var(--red); background: var(--red-dim); }
+        .risk-med { border-left-color: var(--gold); background: var(--gold-dim); }
+        .risk-low { border-left-color: var(--green); background: var(--green-dim); }
+        .risk-safe { border-left-color: var(--blue); background: rgba(96,165,250,0.06); }
+
+        /* ======= 统计盒子 ======= */
+        .stat-tile {
+            text-align: center; padding: 12px 6px; border-radius: var(--radius);
+            background: var(--bg-input); border: 1px solid var(--border-subtle);
+            transition: all var(--transition-fast);
+        }
+        .stat-tile:hover { border-color: var(--border-default); background: var(--bg-hover); }
+        .stat-tile-val { font-size: 22px; font-weight: 700; font-family: 'JetBrains Mono',monospace; }
+        .stat-tile-label { font-size: 10.5px; color: var(--text-muted); margin-top: 3px; }
+
+        /* ======= 截图预览 ======= */
+        .screenshot-preview {
+            border-radius: var(--radius); overflow: hidden;
+            border: 1px solid var(--border-subtle); position: relative;
+            background: var(--bg-base);
+        }
+        .screenshot-preview img { width: 100%; display: block; object-fit: cover; }
+        .screenshot-preview::after {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(135deg, rgba(16,185,129,0.04), transparent 50%);
+            pointer-events: none;
+        }
+
+        /* ======= 连接面板 ======= */
+        .connect-screen {
+            background:
+                radial-gradient(ellipse 60% 60% at 50% 30%, rgba(16,185,129,0.05) 0%, transparent 70%),
+                radial-gradient(ellipse 50% 50% at 85% 75%, rgba(245,158,11,0.04) 0%, transparent 70%),
+                radial-gradient(ellipse 40% 40% at 15% 65%, rgba(96,165,250,0.03) 0%, transparent 70%),
+                var(--bg-root);
+            min-height: calc(100vh - 56px);
+            display: flex; align-items: center; justify-content: center;
+        }
+        .connect-card {
+            background: var(--bg-card); border: 1px solid var(--border-default);
+            border-radius: var(--radius-xl); padding: 40px; max-width: 520px; width: 92%;
+            box-shadow: var(--shadow-lg), var(--shadow-glow-green);
+            position: relative; overflow: hidden;
+        }
+        .connect-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--green), var(--gold), transparent);
+            opacity: 0.5;
+        }
+        .feature-tile {
+            padding: 16px 12px; border-radius: var(--radius);
+            background: var(--bg-input); border: 1px solid var(--border-subtle);
+            text-align: center; transition: all var(--transition); cursor: default;
+        }
+        .feature-tile:hover {
+            border-color: var(--border-default); transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+        .feature-tile i { font-size: 22px; display: block; margin-bottom: 8px; transition: transform var(--transition); }
+        .feature-tile:hover i { transform: scale(1.12); }
+
+        /* ======= Toast通知 ======= */
+        .toast-container { position: fixed; top: 20px; right: 20px; z-index: 10000; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
+        .toast {
+            padding: 12px 18px; border-radius: var(--radius);
+            font-size: var(--font-sm); color: #fff; pointer-events: auto;
+            box-shadow: var(--shadow-lg); animation: toast-in 0.3s ease-out;
+            max-width: 360px; display: flex; align-items: center; gap: 9px;
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+        }
+        .toast-success { background: rgba(5,150,105,0.9); }
+        .toast-error { background: rgba(185,28,28,0.9); }
+        .toast-info { background: rgba(30,64,175,0.9); }
+        .toast-warning { background: rgba(180,83,9,0.9); }
+        @keyframes toast-in { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+        /* ======= 模态框 ======= */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(2,8,19,0.75);
+            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            z-index: 900; display: flex; align-items: center; justify-content: center;
+        }
+        .modal-box {
+            background: var(--bg-card); border: 1px solid var(--border-default);
+            border-radius: var(--radius-xl); padding: 28px;
+            max-width: 640px; width: 92%; max-height: 80vh; overflow-y: auto;
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* ======= 加载 ======= */
+        .skeleton {
+            background: linear-gradient(90deg, var(--bg-input) 25%, var(--bg-hover) 50%, var(--bg-input) 75%);
+            background-size: 300px 100%; animation: shimmer 1.6s ease-in-out infinite;
+            border-radius: var(--radius-sm);
+        }
+        @keyframes shimmer { 0% { background-position: -300px 0; } 100% { background-position: 300px 0; } }
+        .spinner {
+            width: 18px; height: 18px; border: 2px solid var(--border-subtle);
+            border-top-color: var(--green); border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ======= 自动分析指示 ======= */
+        @keyframes scan { 0% { transform: translateX(-100%); } 100% { transform: translateX(200%); } }
+        .auto-badge {
+            display: flex; align-items: center; gap: 7px; font-size: 10.5px;
+            color: var(--green); padding: 5px 11px;
+            background: var(--green-dim); border-radius: 20px; font-weight: 500;
+        }
+        .auto-badge .scan-track {
+            width: 22px; height: 2.5px; border-radius: 3px;
+            background: rgba(16,185,129,0.2); overflow: hidden; position: relative;
+        }
+        .auto-badge .scan-track::after {
+            content: ''; position: absolute; inset: 0; width: 60%;
+            background: var(--green); border-radius: 3px;
+            animation: scan 1.6s ease-in-out infinite;
+        }
+
+        /* ======= 连接状态 ======= */
+        .ws-status {
+            display: flex; align-items: center; gap: 6px; padding: 5px 10px;
+            border-radius: 20px; font-size: 10px; font-weight: 500;
+            background: var(--bg-input); border: 1px solid var(--border-subtle);
+            transition: all var(--transition-fast);
+        }
+
+        /* ======= 动画 ======= */
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .anim-up { animation: fadeUp 0.35s ease-out both; }
+        .anim-in { animation: fadeIn 0.25s ease-out both; }
+
+        /* 交错入场 */
+        .col-left .card:nth-child(1) { animation-delay: 0s; }
+        .col-left .card:nth-child(2) { animation-delay: 0.05s; }
+        .col-left .card:nth-child(3) { animation-delay: 0.10s; }
+        .col-center .card:nth-child(1) { animation-delay: 0.04s; }
+        .col-center .card:nth-child(2) { animation-delay: 0.09s; }
+        .col-center .card:nth-child(3) { animation-delay: 0.14s; }
+        .col-center .card:nth-child(4) { animation-delay: 0.19s; }
+        .col-right .card:nth-child(1) { animation-delay: 0.08s; }
+
+        /* ======= 响应式 ======= */
+        .layout-grid {
+            display: grid;
+            grid-template-columns: 330px 1fr 380px;
+            gap: 14px; padding: 14px;
+            height: calc(100vh - 56px);
+        }
+        .col-left, .col-center, .col-right {
+            display: flex; flex-direction: column; gap: 11px;
+            overflow-y: auto; overflow-x: hidden;
+        }
+        .col-left::-webkit-scrollbar, .col-center::-webkit-scrollbar, .col-right::-webkit-scrollbar { display: none; }
+        .col-left:hover::-webkit-scrollbar, .col-center:hover::-webkit-scrollbar, .col-right:hover::-webkit-scrollbar { display: block; }
+
+        @media (max-width: 1280px) { .layout-grid { grid-template-columns: 290px 1fr 340px; } }
+        @media (max-width: 1024px) {
+            .layout-grid { grid-template-columns: 1fr 1fr; height: auto; }
+            .col-right { grid-column: 1/-1; }
+        }
+        @media (max-width: 768px) {
+            .layout-grid { grid-template-columns: 1fr; }
+            .col-right { grid-column: auto; }
+        }
+
+        /* 评论区流畅滚动 */
+        #allCommentsView, #needReplyView {
+            scroll-behavior: smooth;
+            overscroll-behavior: contain;
+        }
+
+        /* 高亮数 */
+        .count-badge {
+            min-width: 18px; height: 18px; border-radius: 9px;
+            background: var(--red-dim); color: #fca5a5;
+            font-size: 10px; font-weight: 700; display: inline-flex;
+            align-items: center; justify-content: center; padding: 0 5px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Toast -->
+    <div class="toast-container" id="toastBox"></div>
+
+    <!-- ======== 顶部导航 ======== -->
+    <header class="topbar">
+        <div class="topbar-logo">
+            <div class="topbar-logo-icon">
+                <i class="fas fa-seedling" style="color:#022c22;font-size:16px;"></i>
+            </div>
+            <div class="topbar-logo-text">
+                <h1>智农直播助手</h1>
+                <p>三农直播电商AI辅助平台</p>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-2.5" id="liveStats" style="display:none;">
+            <div class="topbar-metric">
+                <span class="dot dot-live pulse"></span>
+                <span style="color:var(--green);font-weight:600;">直播中</span>
+            </div>
+            <div class="topbar-metric">
+                <i class="fas fa-clock" style="color:var(--gold);font-size:10px;"></i>
+                <span class="topbar-metric-value" id="liveDuration">00:00:00</span>
+            </div>
+            <div class="topbar-metric">
+                <i class="fas fa-eye" style="color:var(--blue);font-size:10px;"></i>
+                <span class="topbar-metric-value" id="viewerCount">0</span>
+            </div>
+            <div class="topbar-metric">
+                <i class="fas fa-comment-dots" style="color:var(--purple);font-size:10px;"></i>
+                <span class="topbar-metric-value" id="commentCountHeader">0</span>
+            </div>
+            <div class="auto-badge" id="autoIndicator">
+                <div class="scan-track"></div>
+                <span>AI自动分析</span>
+            </div>
+            <div class="ws-status" id="wsStatus">
+                <div class="ws-dot" style="width:5px;height:5px;border-radius:50%;background:#4ade80;transition:background 0.3s;"></div>
+                <span>已连接</span>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-3" id="connStatus">
+            <span class="dot dot-off" id="statusDot"></span>
+            <span style="color:var(--text-muted);font-size:var(--font-xs);" id="statusText">未连接</span>
+        </div>
+    </header>
+
+    <!-- ======== 连接面板 ======== -->
+    <div id="connectPanel" class="connect-screen">
+        <div class="connect-card anim-up">
+            <div class="text-center mb-8">
+                <div style="width:72px;height:72px;border-radius:var(--radius-lg);background:var(--green-dim);"
+                     class="mx-auto mb-5 flex items-center justify-center">
+                    <i class="fas fa-satellite-dish" style="font-size:30px;color:var(--green);"></i>
+                </div>
+                <h2 class="text-xl font-bold mb-2" style="letter-spacing:-0.01em;">连接直播间</h2>
+                <p style="color:var(--text-muted);font-size:var(--font-sm);">粘贴抖音直播间链接，AI将实时分析直播画面并给出专业辅助</p>
+            </div>
+
+            <div class="flex gap-2.5 mb-7">
+                <input type="text" id="liveUrlInput" class="input flex-1"
+                       placeholder="https://live.douyin.com/xxxxx"
+                       value="">
+                <button class="btn btn-primary btn-lg" id="connectBtn" onclick="connectLive()">
+                    <i class="fas fa-plug"></i> 连接
+                </button>
+            </div>
+
+            <div class="grid grid-cols-3 gap-3">
+                <div class="feature-tile">
+                    <i class="fas fa-brain" style="color:var(--green);"></i>
+                    <p class="text-xs font-semibold" style="color:var(--text-secondary);">AI画面分析</p>
+                    <p class="text-[10px] mt-1" style="color:var(--text-muted);">实时多模态场景理解</p>
+                </div>
+                <div class="feature-tile">
+                    <i class="fas fa-shield-haltered" style="color:var(--gold);"></i>
+                    <p class="text-xs font-semibold" style="color:var(--text-secondary);">合规实时检测</p>
+                    <p class="text-[10px] mt-1" style="color:var(--text-muted);">自动识别违规风险</p>
+                </div>
+                <div class="feature-tile">
+                    <i class="fas fa-comments" style="color:var(--blue);"></i>
+                    <p class="text-xs font-semibold" style="color:var(--text-secondary);">智能评论回复</p>
+                    <p class="text-[10px] mt-1" style="color:var(--text-muted);">AI生成回复建议</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======== 主控制台 ======== -->
+    <div id="controlPanel" class="hidden">
+        <div class="layout-grid anim-in">
+            <!-- == 左列 == -->
+            <div class="col-left">
+                <!-- 直播画面 -->
+                <div class="card" style="flex-shrink:0;">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fas fa-video" style="color:var(--green);"></i> 直播画面
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="tag tag-green" id="monitorTag">
+                                <span class="dot dot-live" style="width:5px;height:5px;"></span> 监控中
+                            </span>
+                            <button class="btn btn-ghost btn-xs" onclick="takeScreenshot()" title="手动截图">
+                                <i class="fas fa-camera"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="screenshot-preview" id="screenshotPreview" style="min-height:200px;display:flex;align-items:center;justify-content:center;">
+                        <div class="text-center" style="color:var(--text-muted);padding:30px;">
+                            <i class="fas fa-tv" style="font-size:28px;margin-bottom:8px;display:block;opacity:0.5;"></i>
+                            <p class="text-xs">等待直播截图采集...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 控制按钮 -->
+                <div class="card" style="flex-shrink:0;padding:14px 20px;">
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <button class="btn btn-primary btn-sm" onclick="startMonitoring()" id="startMonitorBtn">
+                            <i class="fas fa-play"></i> 开始监控
+                        </button>
+                        <button class="btn btn-ghost btn-sm" onclick="stopMonitoring()" id="stopMonitorBtn" disabled>
+                            <i class="fas fa-pause"></i> 暂停
+                        </button>
+                        <button class="btn btn-ghost btn-sm" onclick="closePopup()">
+                            <i class="fas fa-times-circle"></i> 关弹窗
+                        </button>
+                        <div class="flex-1"></div>
+                        <button class="btn btn-danger btn-sm" onclick="disconnectLive()">
+                            <i class="fas fa-sign-out-alt"></i> 断开
+                        </button>
+                    </div>
+                </div>
+
+                <!-- AI画面分析 -->
+                <div class="card card-accent-green" style="flex:1;min-height:0;">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fas fa-brain" style="color:var(--purple);"></i> AI画面分析
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="tag tag-purple" id="analysisAutoTag" style="display:none;">自动</span>
+                            <button class="btn btn-ghost btn-xs" onclick="analyzeScreenshot()" id="analyzeBtn">
+                                <i class="fas fa-wand-magic-sparkles"></i> 分析
+                            </button>
+                        </div>
+                    </div>
+                    <div id="analysisResult" style="overflow-y:auto;max-height:300px;">
+                        <div class="text-center" style="padding:30px 0;color:var(--text-muted);">
+                            <i class="fas fa-sparkles" style="font-size:24px;margin-bottom:8px;display:block;opacity:0.5;"></i>
+                            <p class="text-xs">监控启动后AI将自动分析直播画面</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- == 中列 == -->
+            <div class="col-center">
+                <!-- 直播建议 -->
+                <div class="card card-accent-gold">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fas fa-lightbulb" style="color:var(--gold);"></i> 直播建议
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="tag tag-gold" id="suggestionAutoTag" style="display:none;">自动</span>
+                            <button class="btn btn-ghost btn-xs" onclick="getSuggestions()">
+                                <i class="fas fa-sync-alt"></i> 刷新
+                            </button>
+                        </div>
+                    </div>
+                    <div id="suggestionsResult" style="overflow-y:auto;max-height:280px;">
+                        <div class="text-center" style="padding:30px 0;color:var(--text-muted);">
+                            <i class="fas fa-lightbulb" style="font-size:24px;margin-bottom:8px;display:block;opacity:0.5;"></i>
+                            <p class="text-xs">AI将根据直播状态定时提供专业建议</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 合规检测 -->
+                <div class="card card-accent-red">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fas fa-shield-haltered" style="color:var(--red);"></i> 合规检测
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="tag tag-red" id="complianceAutoTag" style="display:none;">自动</span>
+                            <button class="btn btn-ghost btn-xs" onclick="autoComplianceCheck()">
+                                <i class="fas fa-search"></i> 立即检测
+                            </button>
+                        </div>
+                    </div>
+                    <div id="complianceResult" style="overflow-y:auto;max-height:280px;">
+                        <div class="text-center" style="padding:25px 0;color:var(--text-muted);">
+                            <i class="fas fa-shield-haltered" style="font-size:24px;margin-bottom:8px;display:block;opacity:0.5;"></i>
+                            <p class="text-xs">AI将自动检测直播画面的合规性</p>
+                            <p class="text-xs mt-1">识别画面文字、价格标签、宣传语等合规风险</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 商品识别 -->
+                <div class="card card-accent-green">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fas fa-leaf" style="color:var(--green);"></i> 商品识别
+                        </div>
+                        <button class="btn btn-ghost btn-xs" onclick="detectProduct()">
+                            <i class="fas fa-search"></i> 识别
+                        </button>
+                    </div>
+                    <div id="productResult" style="overflow-y:auto;max-height:190px;">
+                        <div class="text-center" style="padding:25px 0;color:var(--text-muted);">
+                            <i class="fas fa-box-open" style="font-size:24px;margin-bottom:8px;display:block;opacity:0.5;"></i>
+                            <p class="text-xs">点击识别检测直播中的农产品</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 会话统计 -->
+                <div class="card" style="flex-shrink:0;">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fas fa-chart-bar" style="color:var(--blue);"></i> 会话统计
+                        </div>
+                        <div class="flex gap-1.5">
+                            <button class="btn btn-ghost btn-xs" onclick="getSessionSummary()"><i class="fas fa-sync-alt"></i></button>
+                            <button class="btn btn-ghost btn-xs" onclick="getBusinessProfile()"><i class="fas fa-id-card"></i> 画像</button>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-4 gap-2">
+                        <div class="stat-tile">
+                            <div class="stat-tile-val" style="color:var(--green);" id="statScreenshots">0</div>
+                            <div class="stat-tile-label">画面分析</div>
+                        </div>
+                        <div class="stat-tile">
+                            <div class="stat-tile-val" style="color:var(--gold);" id="statProducts">0</div>
+                            <div class="stat-tile-label">商品识别</div>
+                        </div>
+                        <div class="stat-tile">
+                            <div class="stat-tile-val" style="color:var(--blue);" id="statComments">0</div>
+                            <div class="stat-tile-label">评论采集</div>
+                        </div>
+                        <div class="stat-tile">
+                            <div class="stat-tile-val" style="color:var(--purple);" id="statSuggestions">0</div>
+                            <div class="stat-tile-label">建议生成</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- == 右列 == -->
+            <div class="col-right">
+                <div class="card" style="flex:1;min-height:0;display:flex;flex-direction:column;">
+                    <div class="card-header" style="flex-shrink:0;">
+                        <div class="card-title">
+                            <i class="fas fa-comments" style="color:var(--blue);"></i> 实时评论
+                            <span class="tag tag-blue" id="commentCountTag">0条</span>
+                        </div>
+                        <button class="btn btn-ghost btn-xs" onclick="refreshComments()"><i class="fas fa-sync-alt"></i></button>
+                    </div>
+
+                    <div class="tabs mb-3" style="flex-shrink:0;">
+                        <button class="tab active" onclick="switchCommentTab('all',this)" id="tabAll">
+                            <i class="fas fa-list"></i> 全部
+                        </button>
+                        <button class="tab" onclick="switchCommentTab('needReply',this)" id="tabNeedReply">
+                            <i class="fas fa-reply"></i> 待回复 <span class="count-badge" id="needReplyCount" style="display:none;">0</span>
+                        </button>
+                        <button class="tab" onclick="switchCommentTab('analysis',this)" id="tabAnalysis">
+                            <i class="fas fa-chart-pie"></i> 分析
+                        </button>
+                    </div>
+
+                    <div id="allCommentsView" style="flex:1;overflow-y:auto;min-height:0;">
+                        <div class="text-center" style="padding:30px 0;color:var(--text-muted);">
+                            <i class="fas fa-comments" style="font-size:24px;margin-bottom:8px;display:block;opacity:0.5;"></i>
+                            <p class="text-xs">监控启动后自动采集评论</p>
+                        </div>
+                    </div>
+                    <div id="needReplyView" class="hidden" style="flex:1;overflow-y:auto;min-height:0;">
+                        <div class="text-center" style="padding:30px 0;color:var(--text-muted);">
+                            <i class="fas fa-reply" style="font-size:24px;margin-bottom:8px;display:block;opacity:0.5;"></i>
+                            <p class="text-xs">AI将自动筛选需要回复的评论</p>
+                        </div>
+                    </div>
+                    <div id="commentAnalysisView" class="hidden" style="flex:1;overflow-y:auto;min-height:0;">
+                        <button class="btn btn-primary btn-sm mb-3 w-full justify-center" onclick="analyzeComments()">
+                            <i class="fas fa-chart-pie"></i> AI分析评论
+                        </button>
+                        <div id="commentAnalysisResult"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======== 模态框：经营画像 ======== -->
+    <div id="profileModal" class="modal-overlay hidden">
+        <div class="modal-box">
+            <div class="flex items-center justify-between mb-5">
+                <h3 class="font-bold text-lg">农户经营画像</h3>
+                <button onclick="closeModal('profileModal')" class="text-xl" style="color:var(--text-muted);cursor:pointer;background:none;border:none;">&times;</button>
+            </div>
+            <div id="profileContent"></div>
+        </div>
+    </div>
+
+    <!-- ======== 模态框：回复建议 ======== -->
+    <div id="replyModal" class="modal-overlay hidden">
+        <div class="modal-box" style="max-width:480px;">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="font-bold text-base">AI回复建议</h3>
+                <button onclick="closeModal('replyModal')" class="text-xl" style="color:var(--text-muted);cursor:pointer;background:none;border:none;">&times;</button>
+            </div>
+            <div class="result-block mb-3">
+                <p style="color:var(--text-muted);font-size:var(--font-xs);margin-bottom:4px;">观众评论</p>
+                <p style="color:var(--text-primary);font-size:var(--font-sm);" id="replyCommentText"></p>
+            </div>
+            <div id="replySuggestions"></div>
+        </div>
+    </div>
+
+<script>
+// ====================================================================
+// 全局状态
+// ====================================================================
+const API_BASE = '/api/live';
+let ws = null, wsTimer = null;
+let isConnected = false, isMonitoring = false;
+let statusPollTimer = null;
+let allComments = [], needReplyComments = [];
+let currentCommentTab = 'all';
+
+// ====== Toast ======
+function showToast(msg, type='info') {
+    const icons = { success:'fa-check-circle', error:'fa-exclamation-circle', info:'fa-info-circle', warning:'fa-exclamation-triangle' };
+    const el = document.createElement('div');
+    el.className = `toast toast-${type}`;
+    el.innerHTML = `<i class="fas ${icons[type]||icons.info}"></i><span>${msg}</span>`;
+    document.getElementById('toastBox').appendChild(el);
+    setTimeout(() => { el.style.opacity='0'; el.style.transition='opacity 0.3s'; setTimeout(()=>el.remove(),300); }, 4000);
+}
+
+// ====== API ======
+async function api(path, method='GET', body=null) {
+    try {
+        const opts = { method, headers:{'Content-Type':'application/json'} };
+        if (body) opts.body = JSON.stringify(body);
+        const r = await fetch(`${API_BASE}${path}`, opts);
+        return await r.json();
+    } catch(e) { showToast(`请求失败: ${e.message}`,'error'); return null; }
+}
+
+// ====== WebSocket ======
+let wsRetry = 0;
+const WS_MAX_BACKOFF = 30000;
+
+function connectWS() {
+    if (wsTimer) clearTimeout(wsTimer);
+    const proto = location.protocol==='https:'?'wss:':'ws:';
+    ws = new WebSocket(`${proto}//${location.host}${API_BASE}/ws`);
+
+    ws.onopen = () => {
+        console.log('[WS] connected');
+        wsRetry = 0;
+        setWsUI('connected');
+        ws.send(JSON.stringify({command:'get_status'}));
+    };
+
+    ws.onclose = () => {
+        wsRetry++;
+        setWsUI('disconnected');
+        const d = Math.min(5000*Math.pow(2,Math.min(wsRetry-1,4)), WS_MAX_BACKOFF);
+        console.log(`[WS] closed, reconnect in ${d/1000}s (#${wsRetry})`);
+        wsTimer = setTimeout(connectWS, d);
+    };
+
+    ws.onerror = () => setWsUI('error');
+
+    ws.onmessage = (e) => {
+        try { handleWS(JSON.parse(e.data)); } catch(err) { console.error('[WS] parse',err); }
+    };
+}
+
+function setWsUI(s) {
+    const el = document.getElementById('wsStatus');
+    if (!el) return;
+    const dot = el.querySelector('.ws-dot');
+    const span = el.querySelector('span');
+    if (s==='connected') { dot.style.background='#10b981'; span.textContent='已连接'; }
+    else if (s==='disconnected') { dot.style.background='#f59e0b'; span.textContent='重连中'; }
+    else { dot.style.background='#ef4444'; span.textContent='异常'; }
+}
+
+function handleWS(msg) {
+    const {type, data} = msg;
+    switch(type) {
+        case 'live_update':
+            if (data.duration) document.getElementById('liveDuration').textContent = data.duration;
+            if (data.viewer_count) document.getElementById('viewerCount').textContent = data.viewer_count;
+            if (data.comment_count != null) document.getElementById('commentCountHeader').textContent = data.comment_count;
+            if (data.screenshot_count != null) document.getElementById('statScreenshots').textContent = data.screenshot_count;
+            if (data.comment_count != null) document.getElementById('statComments').textContent = data.comment_count;
+            if (data.recent_comments?.length) ingestComments(data.recent_comments);
+            break;
+        case 'analysis':
+            if (data) { renderAnalysis(data); document.getElementById('analysisAutoTag').style.display=''; }
+            break;
+        case 'auto_screenshot':
+            if (data.filepath) updateScreenshot(data.filepath, data.image_base64);
+            if (data.analysis) { renderAnalysis(data.analysis); document.getElementById('analysisAutoTag').style.display=''; }
+            break;
+        case 'product': if (data) renderProduct(data); break;
+        case 'compliance':
+            if (data) { renderCompliance(data); document.getElementById('complianceAutoTag').style.display=''; }
+            break;
+        case 'suggestions':
+            if (data) { renderSuggestions(data); document.getElementById('suggestionAutoTag').style.display=''; }
+            break;
+        case 'comment_analysis': if (data) renderCommentAnalysis(data); break;
+        case 'new_comments': if (data?.length) ingestComments(data); break;
+        case 'disconnected': resetUI(); break;
+        case 'system_warning':
+            if (data?.message) showToast(data.message, data.level||'warning');
+            break;
+    }
+}
+
+// ====== 连接/断开 ======
+async function connectLive() {
+    const url = document.getElementById('liveUrlInput').value.trim();
+    if (!url) { showToast('请输入直播间链接','warning'); return; }
+    const btn = document.getElementById('connectBtn');
+    btn.disabled = true; btn.innerHTML = '<span class="spinner" style="width:14px;height:14px;border-width:2px;"></span> 连接中...';
+
+    const r = await api('/connect','POST',{url, headless:false});
+    if (r?.success) {
+        isConnected = true;
+        showToast('已连接到直播间','success');
+        document.getElementById('connectPanel').classList.add('hidden');
+        document.getElementById('controlPanel').classList.remove('hidden');
+        document.getElementById('liveStats').style.display = 'flex';
+        setHeaderStatus(true);
+        connectWS();
+        startStatusPolling();
+        await startMonitoring();
+    } else showToast(`连接失败: ${r?.message||'未知'}`, 'error');
+
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-plug"></i> 连接';
+}
+
+async function disconnectLive() {
+    await stopMonitoring();
+    await api('/disconnect','POST');
+    resetUI();
+}
+
+function resetUI() {
+    isConnected = false; isMonitoring = false;
+    setHeaderStatus(false);
+    document.getElementById('connectPanel').classList.remove('hidden');
+    document.getElementById('controlPanel').classList.add('hidden');
+    document.getElementById('liveStats').style.display = 'none';
+    stopAllTimers();
+    if (ws) { ws.close(); ws = null; }
+    allComments = []; needReplyComments = [];
+    replyCache.clear();
+}
+
+function stopAllTimers() {
+    if (wsTimer) { clearTimeout(wsTimer); wsTimer = null; }
+    if (statusPollTimer) { clearInterval(statusPollTimer); statusPollTimer = null; }
+}
+
+function setHeaderStatus(on) {
+    const dot = document.getElementById('statusDot');
+    const txt = document.getElementById('statusText');
+    if (on) {
+        dot.className = 'dot dot-live pulse';
+        txt.textContent = '已连接'; txt.style.color = 'var(--green)';
+    } else {
+        dot.className = 'dot dot-off';
+        txt.textContent = '未连接'; txt.style.color = 'var(--text-muted)';
+    }
+}
+
+// ====== 监控 ======
+async function startMonitoring() {
+    const r = await api('/start-monitoring','POST');
+    if (r?.success) {
+        isMonitoring = true;
+        document.getElementById('startMonitorBtn').disabled = true;
+        document.getElementById('stopMonitorBtn').disabled = false;
+        document.getElementById('monitorTag').innerHTML = '<span class="dot dot-live pulse" style="width:5px;height:5px;"></span> 监控中';
+        document.getElementById('monitorTag').className = 'tag tag-green';
+        document.getElementById('autoIndicator').style.display = 'flex';
+        showToast('AI监控已启动','success');
+    }
+}
+
+async function stopMonitoring() {
+    const r = await api('/stop-monitoring','POST');
+    if (r?.success) {
+        isMonitoring = false;
+        document.getElementById('startMonitorBtn').disabled = false;
+        document.getElementById('stopMonitorBtn').disabled = true;
+        document.getElementById('monitorTag').innerHTML = '<span class="dot dot-warn" style="width:5px;height:5px;"></span> 已暂停';
+        document.getElementById('monitorTag').className = 'tag tag-gold';
+        document.getElementById('autoIndicator').style.display = 'none';
+        showToast('监控已暂停','info');
+    }
+}
+
+// ====== 手动操作 ======
+async function takeScreenshot() {
+    const r = await api('/screenshot','POST');
+    if (r?.success) { updateScreenshot(r.filepath); showToast('截图成功','success'); }
+}
+async function closePopup() {
+    const r = await api('/detect-popup','POST');
+    showToast(r?.closed ? `已关闭 ${r.count} 个弹窗` : '未检测到弹窗', r?.closed?'success':'info');
+}
+async function refreshComments() {
+    const r = await api('/comments?count=50');
+    if (r) { allComments = r.comments||[]; renderAllComments(); document.getElementById('commentCountTag').textContent = `${r.total}条`; }
+}
+async function getSessionSummary() {
+    const r = await api('/session-summary');
+    if (r) {
+        document.getElementById('statScreenshots').textContent = r.stats?.screenshots_analyzed||0;
+        document.getElementById('statProducts').textContent = r.stats?.products_detected||0;
+        document.getElementById('statComments').textContent = r.stats?.comment_analyses||0;
+        document.getElementById('statSuggestions').textContent = r.stats?.suggestions_generated||0;
+    }
+}
+async function getBusinessProfile() {
+    const r = await api('/business-profile');
+    if (r) { renderProfile(r); document.getElementById('profileModal').classList.remove('hidden'); }
+}
+
+// ====== AI分析 ======
+async function analyzeScreenshot() {
+    const btn = document.getElementById('analyzeBtn');
+    btn.disabled = true; btn.innerHTML = '<span class="spinner" style="width:14px;height:14px;"></span>';
+    document.getElementById('analysisResult').innerHTML = `
+        <div style="display:flex;flex-direction:column;gap:8px;">
+            <div class="skeleton" style="height:48px;"></div>
+            <div class="skeleton" style="height:48px;width:85%;"></div>
+            <div class="skeleton" style="height:48px;width:92%;"></div>
+        </div>`;
+    const r = await api('/analyze-screenshot','POST');
+    if (r?.success) { renderAnalysis(r.analysis); if (r.screenshot) updateScreenshot(r.screenshot); showToast('AI分析完成','success'); }
+    btn.disabled = false; btn.innerHTML = '<i class="fas fa-wand-magic-sparkles"></i> 分析';
+}
+
+async function detectProduct() {
+    const r = await api('/detect-product','POST');
+    if (r?.success) { renderProduct(r.product); showToast('商品识别完成','success'); }
+}
+
+async function getSuggestions() {
+    const r = await api('/suggestions','POST',{context:{}});
+    if (r?.success) { renderSuggestions(r.suggestions); showToast('建议已生成','success'); }
+}
+
+async function autoComplianceCheck() {
+    document.getElementById('complianceResult').innerHTML = `
+        <div style="display:flex;flex-direction:column;gap:8px;">
+            <div class="skeleton" style="height:50px;"></div>
+            <div class="skeleton" style="height:36px;width:70%;"></div>
+        </div>`;
+    const r = await api('/check-compliance-auto','POST');
+    if (r?.success) { renderCompliance(r.result); showToast('合规检测完成','success'); }
+    else document.getElementById('complianceResult').innerHTML = '<p class="text-xs" style="color:var(--text-muted);text-align:center;padding:20px;">检测失败，请重试</p>';
+}
+
+async function analyzeComments() {
+    const r = await api('/analyze-comments','POST');
+    if (r?.success) { renderCommentAnalysis(r.analysis); showToast('评论分析完成','success'); }
+}
+
+// ====== 评论回复 ======
+const replyCache = new Map();
+
+async function getCommentReply(comment) {
+    document.getElementById('replyCommentText').textContent = `${comment.user||'匿名'}: ${comment.content}`;
+    document.getElementById('replySuggestions').innerHTML = '<div style="text-align:center;padding:20px;"><span class="spinner" style="margin:0 auto 8px;"></span><p class="text-xs" style="color:var(--text-muted);">AI正在生成回复...</p></div>';
+    document.getElementById('replyModal').classList.remove('hidden');
+
+    const r = await api('/comment-reply-suggestion','POST',{comment:comment.content,context:`用户: ${comment.user}`});
+    if (r?.success) renderReplySuggestions(r.reply_suggestions);
+    else document.getElementById('replySuggestions').innerHTML = '<p class="text-xs" style="color:var(--text-muted);text-align:center;">生成失败</p>';
+}
+
+async function autoGenerateReply(c) {
+    const k = c.content + c.time;
+    if (replyCache.has(k)) return;
+    replyCache.set(k,'loading');
+    try {
+        const r = await api('/comment-reply-suggestion','POST',{comment:c.content,context:`用户: ${c.user}`});
+        if (r?.success) { replyCache.set(k, r.reply_suggestions); renderNeedReplyView(); }
+    } catch(e) { replyCache.delete(k); }
+}
+
+// ====== 状态轮询 ======
+function startStatusPolling() {
+    if (statusPollTimer) clearInterval(statusPollTimer);
+    statusPollTimer = setInterval(async () => {
+        if (!isConnected) return;
+        const r = await api('/status');
+        if (r) {
+            document.getElementById('liveDuration').textContent = r.duration||'00:00:00';
+            document.getElementById('viewerCount').textContent = r.viewer_count||'0';
+            isMonitoring = !!r.is_monitoring;
+        }
+        await getSessionSummary();
+    }, 6000);
+}
+
+// ====== 评论处理 ======
+function isNeedReply(c) {
+    const t = c.content||'';
+    return /[？?]/.test(t) || /多少钱|价格|怎么卖|包邮|发货|什么时候|能吃吗|好吃|甜不|新鲜|坏了|退款|差评|不好|难吃/.test(t);
+}
+
+function ingestComments(list) {
+    if (!list?.length) return;
+    const seen = new Set(allComments.map(x=>x.content+x.time));
+    let added = 0;
+    for (const c of list) {
+        const k = c.content+c.time;
+        if (seen.has(k)) continue;
+        allComments.push(c); seen.add(k); added++;
+        if (isNeedReply(c)) { needReplyComments.push(c); autoGenerateReply(c); }
+    }
+    if (!added) return;
+    if (allComments.length>300) allComments = allComments.slice(-300);
+    if (needReplyComments.length>50) needReplyComments = needReplyComments.slice(-50);
+    renderAllComments();
+    document.getElementById('commentCountTag').textContent = `${allComments.length}条`;
+    if (needReplyComments.length) {
+        document.getElementById('needReplyCount').textContent = needReplyComments.length;
+        document.getElementById('needReplyCount').style.display = '';
+    }
+}
+
+// ====================================================================
+// 渲染函数
+// ====================================================================
+
+function updateScreenshot(path, b64) {
+    const el = document.getElementById('screenshotPreview');
+    const fn = path.split('\\').pop().split('/').pop();
+    const src = b64 ? `data:image/jpeg;base64,${b64}` : `/screenshots/${fn}`;
+    el.innerHTML = `<img src="${src}" alt="直播截图" loading="lazy">`;
+}
+
+function renderAnalysis(data) {
+    if (!data) return;
+    const sections = [
+        {k:'scene_analysis',icon:'fa-image',label:'场景分析',color:'var(--green)'},
+        {k:'anchor_status',icon:'fa-user-circle',label:'主播状态',color:'var(--blue)'},
+        {k:'product_display',icon:'fa-box-open',label:'商品展示',color:'var(--gold)'},
+        {k:'visual_quality',icon:'fa-eye',label:'画面质量',color:'var(--purple)'},
+        {k:'interaction_elements',icon:'fa-comment-dots',label:'互动元素',color:'var(--cyan)'},
+    ];
+    let html = sections.map((s,i) => data[s.k] ? `
+        <div class="result-block anim-up" style="animation-delay:${i*0.04}s;">
+            <div class="result-block-header">
+                <i class="fas ${s.icon}" style="color:${s.color};"></i> ${s.label}
+            </div>
+            <div class="result-block-body">${data[s.k]}</div>
+        </div>
+    ` : '').join('');
+
+    if (data.improvement_suggestions?.length) {
+        html += `<div class="result-block result-block-accent anim-up" style="animation-delay:0.2s;">
+            <div class="result-block-header" style="color:var(--green);"><i class="fas fa-lightbulb"></i> 改进建议</div>
+            <div style="color:var(--text-secondary);font-size:var(--font-sm);line-height:1.6;">
+                ${data.improvement_suggestions.map((s,i)=>`<div style="display:flex;align-items:flex-start;gap:7px;margin-bottom:3px;"><span style="color:var(--green);font-weight:700;">${i+1}.</span><span>${s}</span></div>`).join('')}
+            </div>
+        </div>`;
+    }
+    document.getElementById('analysisResult').innerHTML = html || '<p class="text-xs" style="color:var(--text-muted);text-align:center;padding:16px;">暂无分析数据</p>';
+}
+
+function renderProduct(data) {
+    if (!data) return;
+    const name = data.product_name||'未知';
+    const ok = !['未检测到农产品','识别失败','未知'].includes(name);
+    document.getElementById('productResult').innerHTML = `
+        <div class="flex items-start gap-4">
+            <div style="width:44px;height:44px;border-radius:var(--radius);background:${ok?'var(--green-dim)':'rgba(82,107,135,0.12)'};display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <i class="fas fa-${ok?'leaf':'question'}" style="color:${ok?'var(--green)':'var(--text-muted)'};font-size:18px;"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-1.5 flex-wrap">
+                    <span style="font-weight:600;font-size:var(--font-base);">${name}</span>
+                    ${data.category?`<span class="tag tag-gold">${data.category}</span>`:''}
+                </div>
+                ${ok?`<div style="font-size:var(--font-sm);color:var(--text-secondary);line-height:1.6;display:flex;flex-direction:column;gap:3px;">
+                    ${data.appearance?`<div><strong style="color:var(--text-primary);">外观</strong> ${data.appearance}</div>`:''}
+                    ${data.origin_guess?`<div><strong style="color:var(--text-primary);">产地</strong> ${data.origin_guess}</div>`:''}
+                    ${data.price_range_guess?`<div><strong style="color:var(--text-primary);">预估价格</strong> ${data.price_range_guess}</div>`:''}
+                    ${data.selling_points?.length?`<div><strong style="color:var(--text-primary);">卖点</strong> ${data.selling_points.map(s=>`<span class="tag tag-green" style="margin:1px;">${s}</span>`).join('')}</div>`:''}
+                    ${data.storage_advice?`<div><strong style="color:var(--text-primary);">储存</strong> ${data.storage_advice}</div>`:''}
+                </div>`:'<p class="text-xs" style="color:var(--text-muted);">当前画面未检测到农产品</p>'}
+            </div>
+        </div>`;
+}
+
+function renderSuggestions(data) {
+    if (!data) return;
+    let html = '';
+    if (data.content_suggestions?.length) {
+        html += `<div style="margin-bottom:10px;"><div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;"><span class="tag tag-green"><i class="fas fa-bullhorn"></i> 内容建议</span></div>`;
+        html += data.content_suggestions.map(s => `<div class="tip-item"><span class="tip-dot tip-dot-green"></span><span>${s}</span></div>`).join('');
+        html += `</div>`;
+    }
+    if (data.interaction_tips?.length) {
+        html += `<div style="margin-bottom:10px;"><div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;"><span class="tag tag-blue"><i class="fas fa-handshake"></i> 互动技巧</span></div>`;
+        html += data.interaction_tips.map(s => `<div class="tip-item"><span class="tip-dot tip-dot-blue"></span><span>${s}</span></div>`).join('');
+        html += `</div>`;
+    }
+    if (data.sales_techniques?.length) {
+        html += `<div style="margin-bottom:10px;"><div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;"><span class="tag tag-gold"><i class="fas fa-tags"></i> 销售技巧</span></div>`;
+        html += data.sales_techniques.map(s => `<div class="tip-item"><span class="tip-dot tip-dot-gold"></span><span>${s}</span></div>`).join('');
+        html += `</div>`;
+    }
+    if (data.timing_advice) {
+        html += `<div class="result-block result-block-accent" style="margin-top:8px;">
+            <div class="result-block-header" style="color:var(--green);"><i class="fas fa-clock"></i> 节奏建议</div>
+            <div class="result-block-body">${data.timing_advice}</div>
+        </div>`;
+    }
+    document.getElementById('suggestionsResult').innerHTML = html || '<p class="text-xs" style="color:var(--text-muted);text-align:center;padding:16px;">暂无建议</p>';
+}
+
+function renderCompliance(data) {
+    if (!data) return;
+    const risk = data.risk_level||'unknown';
+    const labels = {high:'高风险',medium:'中风险',low:'低风险',safe:'安全',unknown:'未知'};
+    const cls = risk==='high'?'risk-high':risk==='medium'?'risk-med':risk==='low'?'risk-low':'risk-safe';
+    const tagCls = risk==='high'?'tag-red':risk==='medium'?'tag-gold':risk==='low'?'tag-green':'tag-blue';
+
+    let html = `<div class="risk-row ${cls}">
+        <div class="flex items-center gap-2 mb-2">
+            <span class="tag ${tagCls}">${labels[risk]||'未知'}</span>
+            <span class="text-sm font-semibold">合规评估</span>
+        </div>
+        <p class="text-xs" style="color:var(--text-secondary);line-height:1.55;">${data.overall_assessment||'暂无评估'}</p>
+    </div>`;
+
+    if (data.detected_text) {
+        html += `<div class="result-block" style="margin-top:6px;">
+            <div class="result-block-header" style="color:var(--blue);"><i class="fas fa-closed-captioning"></i> 画面识别文字</div>
+            <div class="result-block-body">${data.detected_text}</div>
+        </div>`;
+    }
+
+    if (data.violations?.length) {
+        html += `<div style="margin-top:8px;font-weight:600;font-size:var(--font-xs);color:var(--red);margin-bottom:4px;"><i class="fas fa-exclamation-triangle"></i> 违规项 (${data.violations.length})</div>`;
+        html += data.violations.map(v => `
+            <div class="result-block" style="border-color:rgba(239,68,68,0.2);margin-bottom:4px;">
+                <div style="font-weight:600;color:var(--red);font-size:var(--font-xs);margin-bottom:3px;">${v.type}</div>
+                <div style="font-size:var(--font-xs);color:var(--text-secondary);margin-bottom:2px;"><span style="color:var(--text-muted);">内容:</span> ${v.content}</div>
+                <div style="font-size:var(--font-xs);color:var(--green);"><span style="color:var(--text-muted);">建议:</span> ${v.suggestion}</div>
+            </div>
+        `).join('');
+    }
+
+    if (data.local_keywords_matched?.length) {
+        html += `<div class="result-block" style="margin-top:8px;">
+            <div class="result-block-header" style="color:var(--gold);"><i class="fas fa-search"></i> 本地敏感词匹配</div>
+            <div>${data.local_keywords_matched.map(k=>`<span class="tag tag-red" style="margin:1px;">${k}</span>`).join(' ')}</div>
+        </div>`;
+    }
+
+    document.getElementById('complianceResult').innerHTML = html;
+}
+
+function renderAllComments() {
+    const el = document.getElementById('allCommentsView');
+    if (!allComments.length) { el.innerHTML = '<p class="text-xs" style="color:var(--text-muted);text-align:center;padding:24px;">等待评论数据...</p>'; return; }
+    const list = allComments.slice(-60).reverse();
+    el.innerHTML = list.map(c => {
+        const nr = isNeedReply(c);
+        return `<div class="comment-row ${nr?'comment-row-need-reply':''}">
+            <div style="display:flex;align-items:flex-start;gap:8px;">
+                <span style="font-weight:600;font-size:11px;color:var(--green);min-width:36px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${c.user||'匿名'}</span>
+                <span style="flex:1;font-size:12px;color:var(--text-secondary);line-height:1.5;">${c.content||''}</span>
+                <span style="font-size:10px;color:var(--text-dim);flex-shrink:0;">${c.time||''}</span>
+                ${nr?`<button class="btn btn-ghost btn-xs" onclick='getCommentReply(${JSON.stringify(c).replace(/'/g,"&#39;")})'><i class="fas fa-reply"></i></button>`:''}
+            </div>
+            ${nr?'<div style="margin-top:3px;"><span class="tag tag-gold" style="font-size:9.5px;">待回复</span></div>':''}
+        </div>`;
+    }).join('');
+}
+
+function renderNeedReplyView() {
+    const el = document.getElementById('needReplyView');
+    if (!needReplyComments.length) { el.innerHTML = '<p class="text-xs" style="color:var(--text-muted);text-align:center;padding:24px;">暂无待回复评论</p>'; return; }
+    el.innerHTML = needReplyComments.slice(-25).reverse().map(c => {
+        const k = c.content + c.time;
+        const reps = replyCache.get(k);
+        const ok = reps && reps!=='loading' && Array.isArray(reps);
+        return `<div class="comment-row comment-row-need-reply">
+            <div style="display:flex;align-items:flex-start;gap:8px;">
+                <span style="font-weight:600;font-size:11px;color:var(--green);min-width:36px;flex-shrink:0;">${c.user||'匿名'}</span>
+                <span style="flex:1;font-size:12px;color:var(--text-secondary);">${c.content||''}</span>
+                <span style="font-size:10px;color:var(--text-dim);flex-shrink:0;">${c.time||''}</span>
+                <button class="btn btn-ghost btn-xs" onclick='getCommentReply(${JSON.stringify(c).replace(/'/g,"&#39;")})'><i class="fas fa-reply"></i></button>
+            </div>
+            ${ok?`<div class="reply-box">
+                <p style="font-size:10px;color:var(--green);margin-bottom:6px;font-weight:600;"><i class="fas fa-wand-magic-sparkles"></i> AI回复建议</p>
+                ${reps.map(r=>`
+                    <div class="reply-option">
+                        <span class="tag ${r.type.includes('简短')?'tag-green':r.type.includes('详细')?'tag-blue':'tag-gold'}" style="flex-shrink:0;">${r.type}</span>
+                        <span style="font-size:12px;color:var(--text-secondary);">${r.text}</span>
+                    </div>`).join('')}
+            </div>`:reps==='loading'?'<div style="padding:6px;"><span class="spinner" style="width:12px;height:12px;"></span></div>':''}
+        </div>`;
+    }).join('');
+}
+
+function renderReplySuggestions(list) {
+    if (!list?.length) { document.getElementById('replySuggestions').innerHTML = '<p class="text-xs" style="color:var(--text-muted);text-align:center;">暂无建议</p>'; return; }
+    document.getElementById('replySuggestions').innerHTML = list.map(s => `
+        <div class="reply-option" style="padding:10px 13px;border:1px solid var(--border-subtle);border-radius:var(--radius-sm);">
+            <span class="tag ${s.type.includes('简短')?'tag-green':s.type.includes('详细')?'tag-blue':'tag-gold'}" style="flex-shrink:0;">${s.type}</span>
+            <div style="flex:1;">
+                <p style="font-size:var(--font-sm);color:var(--text-primary);margin-bottom:2px;">${s.text}</p>
+                ${s.tip?`<p style="font-size:10px;color:var(--text-muted);">${s.tip}</p>`:''}
+            </div>
+        </div>
+    `).join('');
+}
+
+function renderCommentAnalysis(data) {
+    if (!data) return;
+    const s = data.sentiment_analysis || {};
+    let html = `<div class="result-block">
+        <div class="result-block-header" style="color:var(--green);"><i class="fas fa-smile"></i> 情绪分析</div>
+        <p style="font-size:var(--font-sm);color:var(--text-secondary);">${s.overall_sentiment||'暂无数据'}</p>
+        ${s.positive_ratio?`<div style="display:flex;gap:5px;margin-top:6px;">
+            <span class="tag tag-green">积极 ${s.positive_ratio}</span>
+            <span class="tag tag-gold">中性 ${s.neutral_ratio||'-'}</span>
+            <span class="tag tag-red">消极 ${s.negative_ratio||'-'}</span>
+        </div>`:''}
+    </div>`;
+
+    if (data.hot_topics?.length) {
+        html += `<div class="result-block"><div class="result-block-header" style="color:var(--blue);"><i class="fas fa-fire"></i> 热门话题</div>
+        ${data.hot_topics.map(t=>`<p style="font-size:var(--font-xs);color:var(--text-secondary);padding:2px 0;">· ${t.topic} (${t.count}) — ${t.sentiment}</p>`).join('')}</div>`;
+    }
+    if (data.purchase_intentions?.length) {
+        html += `<div class="result-block"><div class="result-block-header" style="color:var(--gold);"><i class="fas fa-shopping-cart"></i> 购买意向</div>
+        ${data.purchase_intentions.map(p=>`<p style="font-size:var(--font-xs);color:var(--text-secondary);">· ${p}</p>`).join('')}</div>`;
+    }
+    if (data.actionable_suggestions?.length) {
+        html += `<div class="result-block result-block-accent"><div class="result-block-header" style="color:var(--green);"><i class="fas fa-lightbulb"></i> 行动建议</div>
+        ${data.actionable_suggestions.map(s=>`<p style="font-size:var(--font-xs);color:var(--text-secondary);">· ${s}</p>`).join('')}</div>`;
+    }
+    document.getElementById('commentAnalysisResult').innerHTML = html || '<p class="text-xs" style="color:var(--text-muted);text-align:center;padding:16px;">暂无分析</p>';
+}
+
+function renderProfile(data) {
+    document.getElementById('profileContent').innerHTML = `
+        <div style="display:flex;flex-direction:column;gap:14px;">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                <div class="result-block"><div style="color:var(--text-muted);font-size:var(--font-xs);">会话ID</div><div style="font-family:'JetBrains Mono',monospace;font-size:var(--font-sm);color:var(--text-primary);">${data.session_id||'-'}</div></div>
+                <div class="result-block"><div style="color:var(--text-muted);font-size:var(--font-xs);">直播时长</div><div style="font-family:'JetBrains Mono',monospace;font-size:var(--font-sm);color:var(--text-primary);">${data.duration?Math.floor(data.duration/60)+'分钟':'-'}</div></div>
+            </div>
+            ${data.products_showcased?.length?`<div><h4 style="font-weight:600;color:var(--gold);font-size:var(--font-sm);margin-bottom:6px;">展示商品</h4>${data.products_showcased.map(p=>`<div class="result-block" style="margin-bottom:4px;display:flex;align-items:center;gap:8px;"><span style="font-weight:600;font-size:var(--font-sm);">${p.product_name}</span><span class="tag tag-gold">${p.category||''}</span></div>`).join('')}</div>`:''}
+            ${data.compliance_record?`<div><h4 style="font-weight:600;color:var(--green);font-size:var(--font-sm);margin-bottom:6px;">合规记录</h4><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">${[
+                {v:data.compliance_record.high_risk_count||0,l:'高风险',c:'var(--red)'},
+                {v:data.compliance_record.medium_risk_count||0,l:'中风险',c:'var(--gold)'},
+                {v:data.compliance_record.low_risk_count||0,l:'低风险',c:'var(--green)'}
+            ].map(x=>`<div class="stat-tile"><div class="stat-tile-val" style="color:${x.c};">${x.v}</div><div class="stat-tile-label">${x.l}</div></div>`).join('')}</div></div>`:''}
+            ${data.key_improvements?.length?`<div><h4 style="font-weight:600;color:var(--blue);font-size:var(--font-sm);margin-bottom:6px;">关键改进建议</h4>${data.key_improvements.map(i=>`<p style="font-size:var(--font-xs);color:var(--text-secondary);padding:2px 0;">· ${i}</p>`).join('')}</div>`:''}
+        </div>`;
+}
+
+// ====== Tab切换 ======
+function switchCommentTab(tab, btn) {
+    document.querySelectorAll('#controlPanel .tab').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    currentCommentTab = tab;
+    document.getElementById('allCommentsView').classList.add('hidden');
+    document.getElementById('needReplyView').classList.add('hidden');
+    document.getElementById('commentAnalysisView').classList.add('hidden');
+    if (tab==='all') document.getElementById('allCommentsView').classList.remove('hidden');
+    else if (tab==='needReply') { document.getElementById('needReplyView').classList.remove('hidden'); renderNeedReplyView(); }
+    else document.getElementById('commentAnalysisView').classList.remove('hidden');
+}
+
+function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+// ====== 键盘 ======
+document.addEventListener('keydown', e => {
+    if (e.key==='Enter' && !isConnected) connectLive();
+    if (e.key==='Escape') { closeModal('profileModal'); closeModal('replyModal'); }
+});
+
+// ====== 初始化 ======
+document.getElementById('autoIndicator').style.display = 'none';
+
+(async function init() {
+    try {
+        const r = await api('/status');
+        if (r?.is_running) {
+            isConnected = true; isMonitoring = !!r.is_monitoring;
+            document.getElementById('connectPanel').classList.add('hidden');
+            document.getElementById('controlPanel').classList.remove('hidden');
+            document.getElementById('liveStats').style.display = 'flex';
+            setHeaderStatus(true);
+            if (r.url) document.getElementById('liveUrlInput').value = r.url;
+            if (isMonitoring) {
+                document.getElementById('startMonitorBtn').disabled = true;
+                document.getElementById('stopMonitorBtn').disabled = false;
+                document.getElementById('monitorTag').innerHTML = '<span class="dot dot-live pulse" style="width:5px;height:5px;"></span> 监控中';
+                document.getElementById('monitorTag').className = 'tag tag-green';
+                document.getElementById('autoIndicator').style.display = 'flex';
+            }
+            connectWS(); startStatusPolling();
+            showToast('已恢复直播监控状态','success');
+        }
+    } catch(e) { /* 后端未运行 */ }
+})();
+</script>
+</body>
+</html>

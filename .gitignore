@@ -1,0 +1,65 @@
+# ============================================================
+# .gitignore — 面向三农场景的直播电商AI辅助平台
+# ============================================================
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+*.egg
+dist/
+build/
+*.so
+.eggs/
+*.manifest
+*.spec
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# --- 虚拟环境 ---
+venv/
+env/
+.venv/
+.env/
+envs/
+
+# --- 敏感配置 ---
+.env
+*.key
+*.pem
+*.crt
+
+# --- 运行时数据 ---
+screenshots/
+backend/screenshots/
+data/session_data.json
+data/douyin_live_urls.json
+*.db
+*.sqlite
+*.sqlite3
+
+# --- IDE ---
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# --- 日志 ---
+*.log
+logs/
+
+# --- 大文件 ---
+*.zip
+*.tar.gz
+*.7z
+node_modules/
+
+# --- 临时文件 ---
+tmp/
+temp/
+*.tmp
